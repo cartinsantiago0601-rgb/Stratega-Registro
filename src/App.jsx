@@ -17,27 +17,43 @@ function App() {
 
   // Listen for real-time updates from Firestore
   useEffect(() => {
-    // Nota: Si el projectId es correcto y Firestore está habilitado, esto sincroniza el equipo
-    const q = query(collection(db, "calls"), orderBy("timestamp", "desc"));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      setLogs(data);
-    }, (error) => {
-      console.error("Firestore Error:", error);
-      // Fallback local para demostración si Firestore no está activo
-      if (logs.length === 0) {
-        setLogs([
-          { id: '1', date: "13 Mar, 11:34 AM", caller: "John Doe", contact: "555-0123", duration: "04:15", tags: ["Ventas"], snippet: "Interesado en bot", member: "Jesús" },
-          { id: '2', date: "13 Mar, 10:20 AM", caller: "Jane Smith", contact: "555-0124", duration: "03:20", tags: ["Soporte"], snippet: "Ayuda con login", member: "Santi" }
-        ]);
-      }
-    });
+    // If Firebase is not configured, load demo data immediately
+    if (!db) {
+      setLogs([
+        { id: '1', date: "13 Mar, 11:34 AM", caller: "John Doe", contact: "555-0123", duration: "04:15", tags: ["Ventas"], snippet: "Interesado en bot", member: "Jesús", timestamp: Date.now() },
+        { id: '2', date: "13 Mar, 10:20 AM", caller: "Jane Smith", contact: "555-0124", duration: "03:20", tags: ["Soporte"], snippet: "Ayuda con login", member: "Santi", timestamp: Date.now() - 1000 }
+      ]);
+      return;
+    }
 
-    return () => unsubscribe();
+    try {
+      const q = query(collection(db, "calls"), orderBy("timestamp", "desc"));
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        const data = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setLogs(data.length > 0 ? data : [
+          { id: '1', date: "13 Mar, 11:34 AM", caller: "John Doe", contact: "555-0123", duration: "04:15", tags: ["Ventas"], snippet: "Interesado en bot", member: "Jesús", timestamp: Date.now() },
+          { id: '2', date: "13 Mar, 10:20 AM", caller: "Jane Smith", contact: "555-0124", duration: "03:20", tags: ["Soporte"], snippet: "Ayuda con login", member: "Santi", timestamp: Date.now() - 1000 }
+        ]);
+      }, (error) => {
+        console.error("Firestore Error:", error);
+        setLogs([
+          { id: '1', date: "13 Mar, 11:34 AM", caller: "John Doe", contact: "555-0123", duration: "04:15", tags: ["Ventas"], snippet: "Interesado en bot", member: "Jesús", timestamp: Date.now() },
+          { id: '2', date: "13 Mar, 10:20 AM", caller: "Jane Smith", contact: "555-0124", duration: "03:20", tags: ["Soporte"], snippet: "Ayuda con login", member: "Santi", timestamp: Date.now() - 1000 }
+        ]);
+      });
+      return () => unsubscribe();
+    } catch (error) {
+      console.error("Firestore setup error:", error);
+      setLogs([
+        { id: '1', date: "13 Mar, 11:34 AM", caller: "John Doe", contact: "555-0123", duration: "04:15", tags: ["Ventas"], snippet: "Interesado en bot", member: "Jesús", timestamp: Date.now() },
+        { id: '2', date: "13 Mar, 10:20 AM", caller: "Jane Smith", contact: "555-0124", duration: "03:20", tags: ["Soporte"], snippet: "Ayuda con login", member: "Santi", timestamp: Date.now() - 1000 }
+      ]);
+    }
   }, []);
+
 
   const handleAddCall = async (newCall) => {
     try {
