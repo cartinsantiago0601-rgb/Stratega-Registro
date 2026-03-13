@@ -99,7 +99,7 @@ const LeadModal = ({ isOpen, onClose, onSubmit }) => {
             </form>
           </motion.div>
 
-          <style jsx>{`
+          <style>{`
             .modal-overlay {
               position: fixed;
               top: 0;

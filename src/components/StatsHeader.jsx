@@ -39,7 +39,7 @@ const StatsHeader = ({ logs = [] }) => {
       <StatCard label="Sentimiento" value={sentiment} subtext="Positivo" color="green" delay={0.3} />
       <StatCard label="Registros" value={totalRegistros} color="blue" delay={0.4} />
 
-      <style jsx>{`
+      <style>{`
         .stats-header {
           display: flex;
           gap: 20px;

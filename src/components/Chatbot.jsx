@@ -93,7 +93,7 @@ const Chatbot = ({ logs }) => {
         )}
       </AnimatePresence>
 
-      <style jsx>{`
+      <style>{`
         .chatbot-wrapper {
           position: fixed;
           bottom: 30px;

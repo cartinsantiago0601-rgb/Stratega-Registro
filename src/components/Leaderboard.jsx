@@ -42,7 +42,7 @@ const Leaderboard = ({ logs = [] }) => {
         ))}
       </div>
 
-      <style jsx>{`
+      <style>{`
         .leaderboard-card {
           padding: 24px;
         }
