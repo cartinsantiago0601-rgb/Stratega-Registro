@@ -154,7 +154,7 @@ function App() {
 
       <Chatbot logs={logs} />
 
-      <style jsx>{`
+      <style>{`
         .dashboard-grid {
           display: grid;
           grid-template-columns: 1fr 320px;
